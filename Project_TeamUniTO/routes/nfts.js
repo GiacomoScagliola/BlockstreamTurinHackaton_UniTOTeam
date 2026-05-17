@@ -4,7 +4,28 @@ var nftExamples = require('../data/nft-examples');
 var liquidApi = require('../services/liquid-api');
 
 router.get('/', function(req, res) {
-  res.redirect('/nfts/' + nftExamples[0].id);
+  var nfts = nftExamples.map(function(nft) {
+    var fileKind = 'asset';
+
+    if (nft.fileType && nft.fileType.indexOf('image/') === 0) {
+      fileKind = 'image';
+    }
+
+    if (nft.fileType && nft.fileType.indexOf('video/') === 0) {
+      fileKind = 'video';
+    }
+
+    return Object.assign({}, nft, {
+      fileKind: fileKind,
+      mediaLabel: fileKind === 'video' ? 'VIDEO' : 'BOOK',
+      shortPaymentHash: nft.paymentHash ? nft.paymentHash.slice(0, 12) + '...' + nft.paymentHash.slice(-8) : 'Non disponibile'
+    });
+  });
+
+  res.render('nft-list', {
+    title: 'NFT Liquid Book Market',
+    nfts: nfts
+  });
 });
 
 router.get('/liquid/:txid', function(req, res, next) {

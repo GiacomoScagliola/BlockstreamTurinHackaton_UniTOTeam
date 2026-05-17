@@ -1,4 +1,7 @@
 var childProcess = require('child_process');
+var fs = require('fs');
+var path = require('path');
+var os = require('os');
 var liquidApi = require('./liquid-api');
 
 var DEFAULT_WALLET_NAME = 'unito_buyer';
@@ -16,14 +19,48 @@ function getConfig() {
 }
 
 function cliUnavailableError() {
-  var error = new Error('lwk_cli non trovato. Installa LWK CLI con: cargo install lwk_cli');
+  var error = new Error('lwk_cli non trovato. Installa LWK CLI con: cargo install lwk_cli oppure imposta LWK_CLI_PATH=' + path.join(getCargoBinPath(), 'lwk_cli'));
   error.statusCode = 503;
   return error;
 }
 
+function getCargoBinPath() {
+  return path.join(os.homedir(), '.cargo', 'bin');
+}
+
+function getLwkCliCommand() {
+  var configuredPath = process.env.LWK_CLI_PATH;
+
+  if (configuredPath) {
+    return configuredPath;
+  }
+
+  var cargoCliPath = path.join(getCargoBinPath(), 'lwk_cli');
+
+  if (fs.existsSync(cargoCliPath)) {
+    return cargoCliPath;
+  }
+
+  return 'lwk_cli';
+}
+
+function getCliEnvironment() {
+  var env = Object.assign({}, process.env);
+  var cargoBinPath = getCargoBinPath();
+  var pathEntries = (env.PATH || '').split(path.delimiter);
+
+  if (pathEntries.indexOf(cargoBinPath) === -1) {
+    pathEntries.unshift(cargoBinPath);
+    env.PATH = pathEntries.filter(Boolean).join(path.delimiter);
+  }
+
+  return env;
+}
+
 function invokeLwk(args) {
   return new Promise(function(resolve, reject) {
-    childProcess.execFile('lwk_cli', args, {
+    childProcess.execFile(getLwkCliCommand(), args, {
+      env: getCliEnvironment(),
       timeout: Number(process.env.LWK_CLI_TIMEOUT_MS || 30000),
       maxBuffer: 1024 * 1024 * 4
     }, function(error, stdout, stderr) {
