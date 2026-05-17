@@ -7,6 +7,12 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var nftsRouter = require('./routes/nfts');
+var liquidApiRouter = require('./routes/liquid-api');
+var booksRouter = require('./routes/books');
+var copiesRouter = require('./routes/copies');
+var listingsRouter = require('./routes/listings');
+var txRouter = require('./routes/tx');
+var walletRouter = require('./routes/wallet');
 
 var app = express();
 
@@ -23,6 +29,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/nfts', nftsRouter);
+app.use('/api/liquid', liquidApiRouter);
+app.use('/api/books', booksRouter);
+app.use('/api/copies', copiesRouter);
+app.use('/api/listings', listingsRouter);
+app.use('/api/tx', txRouter);
+app.use('/api/wallet', walletRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

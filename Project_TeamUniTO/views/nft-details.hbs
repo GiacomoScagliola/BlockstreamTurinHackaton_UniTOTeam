@@ -105,6 +105,46 @@
           </div>
         </dl>
       </section>
+
+      {{#if blockchain}}
+        <section class="nft-details__panel" aria-labelledby="blockchain-info-title">
+          <h2 id="blockchain-info-title">Dati blockchain</h2>
+          <dl class="nft-details__grid">
+            <div class="nft-details__item">
+              <dt>Rete</dt>
+              <dd>{{blockchain.network}}</dd>
+            </div>
+
+            <div class="nft-details__item">
+              <dt>Confermata</dt>
+              <dd>{{blockchain.confirmed}}</dd>
+            </div>
+
+            {{#if blockchain.blockHeight}}
+              <div class="nft-details__item">
+                <dt>Block height</dt>
+                <dd>{{blockchain.blockHeight}}</dd>
+              </div>
+            {{/if}}
+
+            {{#if blockchain.assetId}}
+              <div class="nft-details__item nft-details__item--wide">
+                <dt>Asset ID</dt>
+                <dd class="nft-details__hash">{{blockchain.assetId}}</dd>
+              </div>
+            {{/if}}
+
+            <div class="nft-details__item nft-details__item--wide">
+              <dt>Explorer</dt>
+              <dd>
+                <a href="{{blockchain.explorerUrl}}" target="_blank" rel="noopener noreferrer">
+                  Apri transazione su Blockstream Explorer
+                </a>
+              </dd>
+            </div>
+          </dl>
+        </section>
+      {{/if}}
     </div>
   </div>
 </main>

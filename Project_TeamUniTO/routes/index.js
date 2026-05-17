@@ -3,7 +3,7 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'UniTO NFT Market' });
+  res.render('index', { title: 'Liquid Book Market' });
 });
 
 module.exports = router;
