@@ -1,0 +1,26 @@
+{
+  "LICENSE_ASSET_ID": {
+    "value": "0x1111111111111111111111111111111111111111111111111111111111111111",
+    "type": "u256"
+  },
+  "PAYMENT_ASSET_ID": {
+    "value": "0x2222222222222222222222222222222222222222222222222222222222222222",
+    "type": "u256"
+  },
+  "CREATOR_PUBKEY": {
+    "value": "0x79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798",
+    "type": "Pubkey"
+  },
+  "MIN_RESALE_PRICE": {
+    "value": "1",
+    "type": "u64"
+  },
+  "MAX_RESALE_PRICE": {
+    "value": "7000000000",
+    "type": "u64"
+  },
+  "ROYALTY_BPS": {
+    "value": "1000",
+    "type": "u64"
+  }
+}

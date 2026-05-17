@@ -1,0 +1,170 @@
+/*
+ * LicenseLoop / ReadRight recursive resale covenant for Liquid.
+ *
+ * MVP transaction layout, all asset ids and amounts must be explicit:
+ *
+ * Input 0: license asset UTXO locked by this covenant and owned by witness::SELLER_PUBKEY
+ * Input 1: buyer payment UTXO in param::PAYMENT_ASSET_ID
+ *
+ * Output 0: sold license copies locked by this covenant with owner = witness::BUYER_PUBKEY
+ * Output 1: remaining license copies locked by this covenant with owner = witness::SELLER_PUBKEY
+ * Output 2: seller payment to direct P2TR key witness::SELLER_PUBKEY
+ * Output 3: creator royalty payment to direct P2TR key param::CREATOR_PUBKEY
+ * Output 4: buyer payment change to direct P2TR key witness::BUYER_PUBKEY
+ * Output 5: optional fee output
+ *
+ * Genesis is just the first covenant UTXO with owner_state = author pubkey.
+ * Set param::CREATOR_PUBKEY to the same author pubkey and choose the fixed policy
+ * parameters when compiling/instantiating the contract.
+ */
+
+fn checksig(pk: Pubkey, sig: Signature) {
+    let msg: u256 = jet::sig_all_hash();
+    jet::bip_0340_verify((pk, msg), sig);
+}
+
+fn ensure_zero_bit(bit: bool) {
+    assert!(jet::eq_1(<bool>::into(bit), 0));
+}
+
+fn ensure_input_count(expected: u32) {
+    assert!(jet::eq_32(jet::num_inputs(), expected));
+}
+
+fn ensure_output_count(expected: u32) {
+    assert!(jet::eq_32(jet::num_outputs(), expected));
+}
+
+fn get_input_explicit_asset_amount(index: u32) -> (u256, u64) {
+    let pair: (Asset1, Amount1) = unwrap(jet::input_amount(index));
+    let (asset, amount): (Asset1, Amount1) = pair;
+    let asset_bits: u256 = unwrap_right::<(u1, u256)>(asset);
+    let amount_bits: u64 = unwrap_right::<(u1, u256)>(amount);
+    (asset_bits, amount_bits)
+}
+
+fn get_output_explicit_asset_amount(index: u32) -> (u256, u64) {
+    let pair: (Asset1, Amount1) = unwrap(jet::output_amount(index));
+    let (asset, amount): (Asset1, Amount1) = pair;
+    let asset_bits: u256 = unwrap_right::<(u1, u256)>(asset);
+    let amount_bits: u64 = unwrap_right::<(u1, u256)>(amount);
+    (asset_bits, amount_bits)
+}
+
+fn ensure_output_asset_amount(index: u32, expected_asset: u256, expected_amount: u64) {
+    let (asset, amount): (u256, u64) = get_output_explicit_asset_amount(index);
+    assert!(jet::eq_256(asset, expected_asset));
+    assert!(jet::eq_64(amount, expected_amount));
+}
+
+fn p2tr_key_script_hash(output_key: u256) -> u256 {
+    let hash_ctx1: Ctx8 = jet::sha_256_ctx_8_init();
+    let hash_ctx2: Ctx8 = jet::sha_256_ctx_8_add_2(hash_ctx1, 0x5120);
+    let hash_ctx3: Ctx8 = jet::sha_256_ctx_8_add_32(hash_ctx2, output_key);
+    jet::sha_256_ctx_8_finalize(hash_ctx3)
+}
+
+fn covenant_script_hash_for_owner(owner: u256) -> u256 {
+    let tap_leaf: u256 = jet::tapleaf_hash();
+    let state_ctx1: Ctx8 = jet::tapdata_init();
+    let state_ctx2: Ctx8 = jet::sha_256_ctx_8_add_32(state_ctx1, owner);
+    let state_leaf: u256 = jet::sha_256_ctx_8_finalize(state_ctx2);
+    let tap_node: u256 = jet::build_tapbranch(tap_leaf, state_leaf);
+
+    let bip0341_key: u256 = 0x50929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac0;
+    let tweaked_key: u256 = jet::build_taptweak(bip0341_key, tap_node);
+    p2tr_key_script_hash(tweaked_key)
+}
+
+fn ensure_output_script_hash(index: u32, expected_script_hash: u256) {
+    assert!(jet::eq_256(unwrap(jet::output_script_hash(index)), expected_script_hash));
+}
+
+fn ensure_input_state_is_owner(owner: u256) {
+    assert!(jet::eq_256(
+        covenant_script_hash_for_owner(owner),
+        unwrap(jet::input_script_hash(0))
+    ));
+}
+
+fn royalty_amount(sale_price: u64) -> u64 {
+    assert!(jet::le_64(param::ROYALTY_BPS, 10000));
+
+    let royalty_product: u128 = jet::multiply_64(sale_price, param::ROYALTY_BPS);
+    let (high, low): (u64, u64) = <u128>::into(royalty_product);
+    assert!(jet::eq_64(high, 0));
+
+    jet::divide_64(low, 10000)
+}
+
+fn resale_path(
+    seller: Pubkey,
+    buyer: Pubkey,
+    sale_price: u64,
+    sold_license_copies: u64,
+    seller_signature: Signature,
+    has_fee_output: bool
+) {
+    ensure_input_count(2);
+
+    match has_fee_output {
+        true => {
+            ensure_output_count(6);
+            assert!(unwrap(jet::output_is_fee(5)));
+        },
+        false => ensure_output_count(5),
+    };
+
+    assert!(jet::le_64(param::MIN_RESALE_PRICE, sale_price));
+    assert!(jet::le_64(sale_price, param::MAX_RESALE_PRICE));
+    checksig(seller, seller_signature);
+
+    let seller_bits: u256 = seller;
+    let buyer_bits: u256 = buyer;
+    ensure_input_state_is_owner(seller_bits);
+
+    let (license_input_asset, license_input_amount): (u256, u64) = get_input_explicit_asset_amount(0);
+    let (payment_input_asset, payment_input_amount): (u256, u64) = get_input_explicit_asset_amount(1);
+    assert!(jet::eq_256(license_input_asset, param::LICENSE_ASSET_ID));
+    assert!(jet::eq_256(payment_input_asset, param::PAYMENT_ASSET_ID));
+
+    assert!(jet::le_64(1, sold_license_copies));
+    assert!(jet::le_64(sold_license_copies, license_input_amount));
+
+    let (license_change_borrow, remaining_license_copies): (bool, u64) =
+        jet::subtract_64(license_input_amount, sold_license_copies);
+    ensure_zero_bit(license_change_borrow);
+
+    let royalty: u64 = royalty_amount(sale_price);
+    let (seller_borrow, seller_payment): (bool, u64) = jet::subtract_64(sale_price, royalty);
+    ensure_zero_bit(seller_borrow);
+
+    let (change_borrow, buyer_change): (bool, u64) = jet::subtract_64(payment_input_amount, sale_price);
+    ensure_zero_bit(change_borrow);
+
+    ensure_output_script_hash(0, covenant_script_hash_for_owner(buyer_bits));
+    ensure_output_asset_amount(0, param::LICENSE_ASSET_ID, sold_license_copies);
+
+    ensure_output_script_hash(1, covenant_script_hash_for_owner(seller_bits));
+    ensure_output_asset_amount(1, param::LICENSE_ASSET_ID, remaining_license_copies);
+
+    ensure_output_script_hash(2, p2tr_key_script_hash(seller_bits));
+    ensure_output_asset_amount(2, param::PAYMENT_ASSET_ID, seller_payment);
+
+    ensure_output_script_hash(3, p2tr_key_script_hash(param::CREATOR_PUBKEY));
+    ensure_output_asset_amount(3, param::PAYMENT_ASSET_ID, royalty);
+
+    ensure_output_script_hash(4, p2tr_key_script_hash(buyer_bits));
+    ensure_output_asset_amount(4, param::PAYMENT_ASSET_ID, buyer_change);
+}
+
+fn main() {
+    resale_path(
+        witness::SELLER_PUBKEY,
+        witness::BUYER_PUBKEY,
+        witness::SALE_PRICE,
+        witness::SOLD_LICENSE_COPIES,
+        witness::SELLER_SIGNATURE,
+        witness::HAS_FEE_OUTPUT
+    )
+}
