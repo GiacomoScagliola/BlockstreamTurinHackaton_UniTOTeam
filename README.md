@@ -33,8 +33,7 @@ BlockstreamTurinHackaton_UniTOTeam/
 |       `-- README.md                 Detailed contract specifications
 |
 |-- docs/
-|   |-- project_brief_and_use_cases.md   Product vision and detailed use cases
-|   `-- architecture_and_design_decisions.md  Architectural journey and design notes
+|   `-- project_brief_and_use_cases.md   Product vision and detailed use cases
 |
 |-- config/
 |   `-- local/                        Ignored local environment and machine config
