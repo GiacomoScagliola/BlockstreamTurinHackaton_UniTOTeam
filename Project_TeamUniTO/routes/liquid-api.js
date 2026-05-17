@@ -176,7 +176,7 @@ router.get('/asset/:assetId/txs', asyncRoute(function(req, res) {
 
 router.use(function(err, req, res, next) {
   res.status(err.statusCode || 502).json({
-    error: err.message || 'Errore durante la comunicazione con Liquid'
+    error: err.message || 'Liquid communication failed'
   });
 });
 

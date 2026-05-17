@@ -154,6 +154,153 @@ p {
   gap: 20px;
 }
 
+.market-section {
+  display: grid;
+  gap: 18px;
+  margin-top: 34px;
+}
+
+.section-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.section-heading h2 {
+  margin-bottom: 0;
+}
+
+.market-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.market-card {
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.market-card__body {
+  display: grid;
+  gap: 18px;
+  padding: 22px;
+}
+
+.market-card h3 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.compact-meta,
+.status-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 0;
+}
+
+.compact-meta div,
+.status-grid div {
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-soft);
+  padding: 13px;
+}
+
+.compact-meta__wide,
+.status-grid__wide {
+  grid-column: 1 / -1;
+}
+
+.compact-meta dt,
+.status-grid dt {
+  margin-bottom: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.compact-meta dd,
+.status-grid dd {
+  margin-bottom: 0;
+  overflow-wrap: anywhere;
+  color: var(--text);
+  font-weight: 800;
+}
+
+.action-form {
+  display: grid;
+  gap: 12px;
+}
+
+.action-form label {
+  display: grid;
+  gap: 7px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.action-form input {
+  width: 100%;
+  min-height: 42px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: #0f1318;
+  color: var(--text);
+  padding: 0 12px;
+  font: inherit;
+}
+
+.action-form input:focus {
+  outline: 2px solid rgba(82, 211, 199, 0.4);
+  outline-offset: 2px;
+}
+
+.form-result {
+  display: block;
+  max-height: 260px;
+  overflow: auto;
+  margin: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: #090c10;
+  color: var(--text);
+  padding: 12px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+.form-result:empty {
+  display: none;
+}
+
+.form-result--error {
+  border-color: rgba(255, 107, 107, 0.6);
+  color: #ffc0c0;
+}
+
+.status-panel {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  padding: 24px;
+  box-shadow: var(--shadow);
+}
+
+.hash-text {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 13px;
+}
+
 .asset-card {
   overflow: hidden;
   border: 1px solid var(--border);
@@ -444,6 +591,9 @@ p {
   }
 
   .asset-grid,
+  .market-grid,
+  .compact-meta,
+  .status-grid,
   .nft-market__grid,
   .nft-card__meta,
   .nft-details__layout,

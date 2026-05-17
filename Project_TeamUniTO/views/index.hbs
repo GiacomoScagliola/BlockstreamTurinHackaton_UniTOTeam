@@ -1,24 +1,157 @@
 <main class="marketplace">
   <section class="marketplace__intro">
-    <p class="eyebrow">Marketplace distribuito</p>
+    <p class="eyebrow">Liquid digital assets</p>
     <h1>{{title}}</h1>
     <p>
-      Una prima interfaccia per libri digitali su Liquid, con vendita primaria,
-      rivendita, split automatico e preparazione PSET.
+      Buy primary book tokens, prepare resale PSETs through the Simplicity covenant,
+      and list owned copies for sale.
     </p>
   </section>
 
-  <section class="asset-grid" aria-label="Esempi libri digitali">
-    <article class="asset-card">
-      <div class="asset-card__media asset-card__media--nft">
-        <span>NFT</span>
+  <section class="market-section" aria-labelledby="primary-sale-title">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Primary sale</p>
+        <h2 id="primary-sale-title">Buy new book tokens</h2>
       </div>
-      <div class="asset-card__body">
-        <p class="asset-card__label">Collezione Liquid</p>
-        <h2>NFT book copies</h2>
-        <p>Vista consultabile delle copie digitali, con prezzo, metadati e royalties.</p>
-        <a class="button" href="/nfts">Visualizza NFT</a>
+    </div>
+
+    <div class="market-grid">
+      {{#each books}}
+        <article class="market-card">
+          <div class="market-card__body">
+            <p class="asset-card__label">{{authorName}}</p>
+            <h3>{{title}}</h3>
+            <dl class="compact-meta">
+              <div>
+                <dt>Price</dt>
+                <dd>{{initialPriceLabel}}</dd>
+              </div>
+              <div>
+                <dt>Copies left</dt>
+                <dd>{{copiesRemaining}}</dd>
+              </div>
+              <div>
+                <dt>Royalty</dt>
+                <dd>{{royaltyLabel}}</dd>
+              </div>
+              <div>
+                <dt>Resale cap</dt>
+                <dd>{{minPriceLabel}} - {{maxPriceLabel}}</dd>
+              </div>
+            </dl>
+
+            <form class="action-form js-primary-buy" data-book-id="{{id}}">
+              <label>
+                Buyer address
+                <input name="buyerAddress" value="demo_buyer_address" required>
+              </label>
+              <button class="button" type="submit">Prepare buy PSET</button>
+            </form>
+            <pre class="form-result" aria-live="polite"></pre>
+          </div>
+        </article>
+      {{/each}}
+    </div>
+  </section>
+
+  <section class="market-section" aria-labelledby="resale-title">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Resale market</p>
+        <h2 id="resale-title">Buy listed tokens</h2>
       </div>
-    </article>
+    </div>
+
+    <div class="market-grid">
+      {{#each listings}}
+        <article class="market-card">
+          <div class="market-card__body">
+            <p class="asset-card__label">Copy {{copyId}}</p>
+            <h3>{{title}}</h3>
+            <dl class="compact-meta">
+              <div>
+                <dt>Price</dt>
+                <dd>{{priceLabel}}</dd>
+              </div>
+              <div>
+                <dt>Royalty</dt>
+                <dd>{{royaltyLabel}}</dd>
+              </div>
+              <div class="compact-meta__wide">
+                <dt>Allowed resale range</dt>
+                <dd>{{minPriceLabel}} - {{maxPriceLabel}}</dd>
+              </div>
+            </dl>
+
+            <form class="action-form js-resale-buy" data-listing-id="{{id}}">
+              <label>
+                Buyer address
+                <input name="buyerAddress" value="demo_buyer_address" required>
+              </label>
+              <label>
+                Buyer pubkey
+                <input name="buyerPubkey" value="f9308a019258c31049344f85f89d5229b531c845836f99b08601f113bce036f9" required>
+              </label>
+              <label>
+                Liquid fee
+                <input name="feeAmount" type="number" min="0" step="1" value="500">
+              </label>
+              <button class="button" type="submit">Prepare covenant PSET</button>
+            </form>
+            <pre class="form-result" aria-live="polite"></pre>
+          </div>
+        </article>
+      {{/each}}
+    </div>
+  </section>
+
+  <section class="market-section" aria-labelledby="sell-title">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Seller tools</p>
+        <h2 id="sell-title">List owned tokens</h2>
+      </div>
+    </div>
+
+    <div class="market-grid">
+      {{#each copies}}
+        <article class="market-card">
+          <div class="market-card__body">
+            <p class="asset-card__label">Copy {{id}}</p>
+            <h3>{{title}}</h3>
+            <dl class="compact-meta">
+              <div>
+                <dt>Last sale</dt>
+                <dd>{{lastSalePriceLabel}}</dd>
+              </div>
+              <div>
+                <dt>Status</dt>
+                <dd>{{status}}</dd>
+              </div>
+              <div class="compact-meta__wide">
+                <dt>Allowed resale range</dt>
+                <dd>{{minPriceLabel}} - {{maxPriceLabel}}</dd>
+              </div>
+            </dl>
+
+            <form class="action-form js-list-copy" data-copy-id="{{id}}">
+              <label>
+                Seller address
+                <input name="sellerAddress" value="{{ownerAddress}}" required>
+              </label>
+              <label>
+                Price in sats
+                <input name="price" type="number" min="{{minPrice}}" max="{{maxPrice}}" step="1" value="{{minPrice}}" required>
+              </label>
+              <button class="button" type="submit">List token</button>
+            </form>
+            <pre class="form-result" aria-live="polite"></pre>
+          </div>
+        </article>
+      {{/each}}
+    </div>
   </section>
 </main>
+
+<script src="/marketplace.js"></script>

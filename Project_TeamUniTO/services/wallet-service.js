@@ -19,7 +19,7 @@ function getConfig() {
 }
 
 function cliUnavailableError() {
-  var error = new Error('lwk_cli non trovato. Installa LWK CLI con: cargo install lwk_cli oppure imposta LWK_CLI_PATH=' + path.join(getCargoBinPath(), 'lwk_cli'));
+  var error = new Error('lwk_cli was not found. Install it with: cargo install lwk_cli, or set LWK_CLI_PATH=' + path.join(getCargoBinPath(), 'lwk_cli'));
   error.statusCode = 503;
   return error;
 }
@@ -48,6 +48,7 @@ function getCliEnvironment() {
   var env = Object.assign({}, process.env);
   var cargoBinPath = getCargoBinPath();
   var pathEntries = (env.PATH || '').split(path.delimiter);
+  env.NETWORK = liquidApi.getLwkNetworkName(env.LIQUID_NETWORK || 'liquidtestnet');
 
   if (pathEntries.indexOf(cargoBinPath) === -1) {
     pathEntries.unshift(cargoBinPath);
@@ -92,15 +93,7 @@ function parseCliOutput(output) {
 }
 
 function ensureConfigured() {
-  var config = getConfig();
-
-  if (!config.mnemonic) {
-    var error = new Error('LWK_MNEMONIC mancante: configura un mnemonic testnet nelle variabili ambiente');
-    error.statusCode = 503;
-    throw error;
-  }
-
-  return config;
+  return getConfig();
 }
 
 function checkCli() {
@@ -121,20 +114,75 @@ function checkCli() {
   });
 }
 
+function containsName(output, name) {
+  var parsed = parseCliOutput(output);
+
+  if (Array.isArray(parsed)) {
+    return parsed.some(function(item) {
+      return item === name || item.name === name || item.walletName === name || item.signerName === name;
+    });
+  }
+
+  if (parsed && typeof parsed === 'object') {
+    return Object.keys(parsed).some(function(key) {
+      var value = parsed[key];
+      return key === name || value === name || value.name === name || value.walletName === name || value.signerName === name;
+    });
+  }
+
+  return String(output || '').indexOf(name) !== -1;
+}
+
+function shortError(error) {
+  return String(error && error.message ? error.message : error)
+    .split(/\r?\n/)
+    .filter(Boolean)[0];
+}
+
+function checkLoadedResource(kind, name) {
+  return invokeLwk([kind, 'list']).then(function(output) {
+    return {
+      available: true,
+      loaded: containsName(output, name),
+      raw: parseCliOutput(output)
+    };
+  }).catch(function(error) {
+    return {
+      available: false,
+      loaded: false,
+      error: shortError(error)
+    };
+  });
+}
+
 function getStatus() {
   var config = getConfig();
 
-  return checkCli().then(function(cli) {
+  return Promise.all([
+    checkCli(),
+    checkLoadedResource('wallet', config.walletName),
+    checkLoadedResource('signer', config.signerName)
+  ]).then(function(results) {
+    var cli = results[0];
+    var wallet = results[1];
+    var signer = results[2];
+
     return {
-      configured: Boolean(config.mnemonic),
+      configured: Boolean(cli.available && wallet.loaded && signer.loaded),
       cliAvailable: cli.available,
       cliVersion: cli.version,
       cliError: cli.error,
+      serverAvailable: wallet.available || signer.available,
+      serverError: wallet.error || signer.error,
+      walletLoaded: wallet.loaded,
+      signerLoaded: signer.loaded,
       walletName: config.walletName,
       signerName: config.signerName,
       network: config.network,
       lwkNetwork: liquidApi.getLwkNetworkName(config.network),
-      policyAsset: config.policyAsset
+      policyAsset: config.policyAsset,
+      needsMnemonic: !config.mnemonic,
+      setupHint: 'Start the LWK RPC server, then load wallet "' + config.walletName + '" and signer "' + config.signerName + '".'
     };
   });
 }
@@ -177,7 +225,7 @@ function signPset(pset) {
   var config = ensureConfigured();
 
   if (!pset) {
-    var error = new Error('pset obbligatoria');
+    var error = new Error('pset is required');
     error.statusCode = 400;
     throw error;
   }
@@ -192,7 +240,7 @@ function broadcastPset(pset) {
   var config = ensureConfigured();
 
   if (!pset) {
-    var error = new Error('signedPset obbligatoria');
+    var error = new Error('signedPset is required');
     error.statusCode = 400;
     throw error;
   }

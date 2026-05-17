@@ -122,7 +122,7 @@ function requestLiquidApi(pathname, options) {
                     var responseBody = Buffer.concat(chunks).toString("utf8");
 
                     if (res.statusCode < 200 || res.statusCode >= 300) {
-                        var error = new Error(responseBody || "Errore API Liquid");
+                        var error = new Error(responseBody || "Liquid API error");
                         error.statusCode = res.statusCode;
                         return reject(error);
                     }
@@ -163,7 +163,7 @@ function getTransactionOutput(txid, vout, network) {
         var output = transaction.vout && transaction.vout[outputIndex];
 
         if (!output) {
-            var error = new Error("Output non trovato per vout " + vout);
+            var error = new Error("Output not found for vout " + vout);
             error.statusCode = 404;
             throw error;
         }
@@ -188,7 +188,7 @@ function getTransactionPrevout(txid, vout, network) {
         var output = transaction.vout && transaction.vout[outputIndex];
 
         if (!output) {
-            var error = new Error("Prevout non trovato per vout " + vout);
+            var error = new Error("Prevout not found for vout " + vout);
             error.statusCode = 404;
             throw error;
         }

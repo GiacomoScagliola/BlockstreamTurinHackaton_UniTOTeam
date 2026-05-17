@@ -18,7 +18,7 @@ router.get('/', function(req, res) {
     return Object.assign({}, nft, {
       fileKind: fileKind,
       mediaLabel: fileKind === 'video' ? 'VIDEO' : 'BOOK',
-      shortPaymentHash: nft.paymentHash ? nft.paymentHash.slice(0, 12) + '...' + nft.paymentHash.slice(-8) : 'Non disponibile'
+      shortPaymentHash: nft.paymentHash ? nft.paymentHash.slice(0, 12) + '...' + nft.paymentHash.slice(-8) : 'Unavailable'
     });
   });
 

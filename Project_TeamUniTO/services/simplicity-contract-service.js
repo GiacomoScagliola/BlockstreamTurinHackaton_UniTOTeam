@@ -14,7 +14,7 @@ function getCargoCommand() {
 
 function ensureString(value, label) {
   if (!value || typeof value !== 'string') {
-    var error = new Error(label + ' obbligatorio per il builder Simplicity');
+    var error = new Error(label + ' is required by the Simplicity builder');
     error.statusCode = 400;
     throw error;
   }
@@ -24,7 +24,7 @@ function ensureString(value, label) {
 
 function ensureUtxo(value, label) {
   if (!value || typeof value !== 'object') {
-    var error = new Error(label + ' obbligatorio per il builder Simplicity');
+    var error = new Error(label + ' is required by the Simplicity builder');
     error.statusCode = 400;
     throw error;
   }
@@ -96,7 +96,7 @@ function invokeRustBuilder(payload) {
         try {
           resolve(JSON.parse(stdout));
         } catch (parseError) {
-          parseError.message = 'Risposta Rust non valida: ' + parseError.message;
+          parseError.message = 'Invalid Rust response: ' + parseError.message;
           parseError.statusCode = 502;
           reject(parseError);
         }

@@ -13,7 +13,7 @@ function asyncRoute(handler) {
 
 function requireString(value, label) {
   if (!value || typeof value !== 'string') {
-    var error = new Error(label + ' obbligatorio');
+    var error = new Error(label + ' is required');
     error.statusCode = 400;
     throw error;
   }
@@ -25,7 +25,7 @@ function getListingOrFail(listingId) {
   var listing = marketplace.findListing(listingId);
 
   if (!listing) {
-    var error = new Error('Listing non trovato');
+    var error = new Error('Listing not found');
     error.statusCode = 404;
     throw error;
   }
@@ -37,7 +37,7 @@ function getCopyOrFail(copyId) {
   var copy = marketplace.findCopy(copyId);
 
   if (!copy) {
-    var error = new Error('Copia non trovata');
+    var error = new Error('Copy not found');
     error.statusCode = 404;
     throw error;
   }
@@ -49,7 +49,7 @@ function getBookOrFail(bookId) {
   var book = marketplace.findBook(bookId);
 
   if (!book) {
-    var error = new Error('Libro non trovato');
+    var error = new Error('Book not found');
     error.statusCode = 404;
     throw error;
   }
@@ -96,15 +96,15 @@ router.post('/:listingId/buy/prepare', asyncRoute(function(req, res) {
     var pset = isSimplicity ? builderResult.pset : builderResult;
     var contractSummary = isSimplicity ? builderResult.summary : null;
     var outputOrder = [
-      'BookCopyContract nuovo buyer',
-      'BookCopyContract resto seller',
-      'Pagamento vecchio owner',
-      'Royalty autore',
-      'Resto buyer'
+      'BookCopyContract for buyer',
+      'BookCopyContract seller remainder',
+      'Previous owner payment',
+      'Author royalty',
+      'Buyer change'
     ];
 
     if (contractSummary && contractSummary.fee_amount > 0) {
-      outputOrder.push('Fee Liquid');
+      outputOrder.push('Liquid fee');
     }
 
     res.json({

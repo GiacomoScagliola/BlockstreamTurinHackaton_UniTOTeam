@@ -1,37 +1,37 @@
 <main class="nft-market">
   <section class="nft-market__header">
     <div>
-      <p class="eyebrow">Collezione NFT</p>
+      <p class="eyebrow">NFT collection</p>
       <h1>{{title}}</h1>
       <p>
-        Copie digitali e asset collegati al mercato dei libri su Liquid, con
-        prezzi, royalties e metadati pronti per il flusso di vendita.
+        Digital copies and assets connected to the Liquid book market, with
+        prices, royalties, and metadata ready for the trading flow.
       </p>
     </div>
-    <a class="button button--secondary" href="/">Torna al market</a>
+    <a class="button button--secondary" href="/">Back to market</a>
   </section>
 
-  <section class="nft-market__grid" aria-label="NFT disponibili">
+  <section class="nft-market__grid" aria-label="Available NFTs">
     {{#each nfts}}
       <article class="nft-card">
-        <a class="nft-card__media nft-card__media--{{fileKind}}" href="/nfts/{{id}}" aria-label="Apri {{title}}">
+        <a class="nft-card__media nft-card__media--{{fileKind}}" href="/nfts/{{id}}" aria-label="Open {{title}}">
           <span>{{mediaLabel}}</span>
         </a>
 
         <div class="nft-card__body">
           <div class="nft-card__heading">
-            <p class="asset-card__label">{{#if fileType}}{{fileType}}{{else}}Asset Liquid{{/if}}</p>
+            <p class="asset-card__label">{{#if fileType}}{{fileType}}{{else}}Liquid asset{{/if}}</p>
             <h2>{{title}}</h2>
           </div>
 
           <dl class="nft-card__meta">
             <div>
-              <dt>Prezzo</dt>
-              <dd>{{#if price}}{{price}}{{else}}Non disponibile{{/if}}</dd>
+              <dt>Price</dt>
+              <dd>{{#if price}}{{price}}{{else}}Unavailable{{/if}}</dd>
             </div>
             <div>
               <dt>Royalties</dt>
-              <dd>{{#if royaltyPercentage}}{{royaltyPercentage}}%{{else}}Non disponibile{{/if}}</dd>
+              <dd>{{#if royaltyPercentage}}{{royaltyPercentage}}%{{else}}Unavailable{{/if}}</dd>
             </div>
           </dl>
 
@@ -40,7 +40,7 @@
             <code>{{shortPaymentHash}}</code>
           </div>
 
-          <a class="button" href="/nfts/{{id}}">Visualizza NFT</a>
+          <a class="button" href="/nfts/{{id}}">View NFT</a>
         </div>
       </article>
     {{/each}}

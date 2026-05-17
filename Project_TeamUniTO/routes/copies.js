@@ -7,7 +7,7 @@ function getCopyOrFail(copyId) {
   var copy = marketplace.findCopy(copyId);
 
   if (!copy) {
-    var error = new Error('Copia non trovata');
+    var error = new Error('Copy not found');
     error.statusCode = 404;
     throw error;
   }
@@ -19,7 +19,7 @@ function getBookOrFail(bookId) {
   var book = marketplace.findBook(bookId);
 
   if (!book) {
-    var error = new Error('Libro non trovato');
+    var error = new Error('Book not found');
     error.statusCode = 404;
     throw error;
   }

@@ -2,7 +2,7 @@ function toSats(value, label) {
   var amount = Number(value);
 
   if (!Number.isInteger(amount) || amount < 0) {
-    var error = new Error((label || 'amount') + ' deve essere un intero positivo in sats');
+    var error = new Error((label || 'amount') + ' must be a positive integer in sats');
     error.statusCode = 400;
     throw error;
   }
@@ -57,7 +57,7 @@ function assertValidContractResalePrice(book, lastSalePrice, newPrice) {
   var range = getContractResaleRange(book, lastSalePrice);
 
   if (amount < range.min || amount > range.max) {
-    var error = new Error('Prezzo rivendita non valido. Range consentito: ' + range.min + '-' + range.max);
+    var error = new Error('Invalid resale price. Allowed range: ' + range.min + '-' + range.max);
     error.statusCode = 400;
     throw error;
   }

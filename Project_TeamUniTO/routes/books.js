@@ -12,7 +12,7 @@ function asyncRoute(handler) {
 
 function requireString(value, label) {
   if (!value || typeof value !== 'string') {
-    var error = new Error(label + ' obbligatorio');
+    var error = new Error(label + ' is required');
     error.statusCode = 400;
     throw error;
   }
@@ -24,7 +24,7 @@ function getBookOrFail(bookId) {
   var book = marketplace.findBook(bookId);
 
   if (!book) {
-    var error = new Error('Libro non trovato');
+    var error = new Error('Book not found');
     error.statusCode = 404;
     throw error;
   }
@@ -83,8 +83,8 @@ router.post('/:bookId/buy/prepare', asyncRoute(function(req, res) {
         outputOrder: [
           'BookSaleContract stock - 1',
           'BookCopyContract buyer',
-          'Pagamento autore',
-          'Resto buyer'
+          'Author payment',
+          'Buyer change'
         ]
       }
     });

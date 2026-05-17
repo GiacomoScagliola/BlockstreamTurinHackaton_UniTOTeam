@@ -1,0 +1,59 @@
+<main class="wallet-page">
+  <section class="marketplace__intro">
+    <p class="eyebrow">Wallet</p>
+    <h1>{{title}}</h1>
+    <p>
+      LWK connection status for preparing, signing, and broadcasting Liquid PSETs.
+    </p>
+  </section>
+
+  <section class="status-panel" aria-labelledby="wallet-status-title">
+    <h2 id="wallet-status-title">Connection status</h2>
+    <dl class="status-grid">
+      <div>
+        <dt>Ready</dt>
+        <dd>{{#if status.configured}}Yes{{else}}No{{/if}}</dd>
+      </div>
+      <div>
+        <dt>LWK CLI</dt>
+        <dd>{{#if status.cliAvailable}}{{status.cliVersion}}{{else}}Unavailable{{/if}}</dd>
+      </div>
+      <div>
+        <dt>LWK server</dt>
+        <dd>{{#if status.serverAvailable}}Running{{else}}Not running{{/if}}</dd>
+      </div>
+      <div>
+        <dt>Network</dt>
+        <dd>{{status.lwkNetwork}}</dd>
+      </div>
+      <div>
+        <dt>Wallet</dt>
+        <dd>{{status.walletName}} - {{#if status.walletLoaded}}loaded{{else}}not loaded{{/if}}</dd>
+      </div>
+      <div>
+        <dt>Signer</dt>
+        <dd>{{status.signerName}} - {{#if status.signerLoaded}}loaded{{else}}not loaded{{/if}}</dd>
+      </div>
+      <div class="status-grid__wide">
+        <dt>Policy asset</dt>
+        <dd class="hash-text">{{status.policyAsset}}</dd>
+      </div>
+      {{#if status.serverError}}
+        <div class="status-grid__wide">
+          <dt>Server message</dt>
+          <dd>{{status.serverError}}</dd>
+        </div>
+      {{/if}}
+      {{#if status.cliError}}
+        <div class="status-grid__wide">
+          <dt>CLI message</dt>
+          <dd>{{status.cliError}}</dd>
+        </div>
+      {{/if}}
+      <div class="status-grid__wide">
+        <dt>Setup hint</dt>
+        <dd>{{status.setupHint}}</dd>
+      </div>
+    </dl>
+  </section>
+</main>
