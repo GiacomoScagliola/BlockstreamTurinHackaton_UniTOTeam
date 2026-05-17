@@ -1,0 +1,13 @@
+[package]
+name = "license-resale-covenant"
+version = "0.1.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+thiserror = "2"
+smplx-std = { git = "https://github.com/BlockstreamResearch/smplx", branch = "dev" }
+lwk_common = "0.17.0"
+
+[dev-dependencies]
+anyhow = "1"
