@@ -1,8 +1,36 @@
-<h1>{{title}}</h1>
-<p>Welcome to {{title}}</p>
+<main class="marketplace">
+  <section class="marketplace__intro">
+    <p class="eyebrow">Marketplace distribuito</p>
+    <h1>{{title}}</h1>
+    <p>
+      Una prima interfaccia per consultare asset NFT, dettagli di pagamento,
+      file associati, range prezzo e royalties.
+    </p>
+  </section>
 
-<h2>Esempi NFT</h2>
-<ul>
-  <li><a href="/nfts/torino-001">Torino Genesis #001</a></li>
-  <li><a href="/nfts/liquid-art-002">Liquid Art Pass #002</a></li>
-</ul>
+  <section class="asset-grid" aria-label="Esempi NFT">
+    <article class="asset-card">
+      <div class="asset-card__media asset-card__media--image">
+        <span>NFT</span>
+      </div>
+      <div class="asset-card__body">
+        <p class="asset-card__label">Artwork</p>
+        <h2>Torino Genesis #001</h2>
+        <p>Asset immagine con prezzo fisso e royalties creator al 5%.</p>
+        <a class="button" href="/nfts/torino-001">Visualizza dettagli</a>
+      </div>
+    </article>
+
+    <article class="asset-card">
+      <div class="asset-card__media asset-card__media--video">
+        <span>MP4</span>
+      </div>
+      <div class="asset-card__body">
+        <p class="asset-card__label">Pass digitale</p>
+        <h2>Liquid Art Pass #002</h2>
+        <p>Contenuto video con range prezzo e royalties creator al 7.5%.</p>
+        <a class="button" href="/nfts/liquid-art-002">Visualizza dettagli</a>
+      </div>
+    </article>
+  </section>
+</main>

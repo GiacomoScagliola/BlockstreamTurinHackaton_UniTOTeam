@@ -1,89 +1,110 @@
 <main class="nft-details">
   <header class="nft-details__header">
-    <p class="nft-details__eyebrow">Dettaglio NFT</p>
-    <h1>{{#if title}}{{title}}{{else}}Informazioni asset digitale{{/if}}</h1>
+    <div>
+      <p class="eyebrow">Dettaglio NFT</p>
+      <h1>{{#if title}}{{title}}{{else}}Informazioni asset digitale{{/if}}</h1>
+      <p>
+        Scheda tecnica dell'asset pronta per essere collegata ai dati della rete
+        e al flusso di compravendita.
+      </p>
+    </div>
+    <a class="button button--secondary" href="/">Torna agli esempi</a>
   </header>
 
-  <section class="nft-details__panel" aria-labelledby="payment-info-title">
-    <h2 id="payment-info-title">Pagamento</h2>
-    <dl class="nft-details__grid">
-      <div class="nft-details__item">
-        <dt>Hash per pagamenti</dt>
-        <dd class="nft-details__hash">
-          {{#if paymentHash}}
-            {{paymentHash}}
-          {{else}}
-            Non disponibile
+  <div class="nft-details__layout">
+    <section class="nft-preview" aria-label="Anteprima NFT">
+      <div class="nft-preview__art">
+        <span>{{#if fileType}}{{fileType}}{{else}}NFT{{/if}}</span>
+      </div>
+      <div class="nft-preview__summary">
+        <p>Prezzo</p>
+        <strong>{{#if price}}{{price}}{{else}}Non disponibile{{/if}}</strong>
+      </div>
+    </section>
+
+    <div class="nft-details__content">
+      <section class="nft-details__panel" aria-labelledby="payment-info-title">
+        <h2 id="payment-info-title">Pagamento</h2>
+        <dl class="nft-details__grid">
+          <div class="nft-details__item nft-details__item--wide">
+            <dt>Hash per pagamenti</dt>
+            <dd class="nft-details__hash">
+              {{#if paymentHash}}
+                {{paymentHash}}
+              {{else}}
+                Non disponibile
+              {{/if}}
+            </dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="nft-details__panel" aria-labelledby="file-info-title">
+        <h2 id="file-info-title">File</h2>
+        <dl class="nft-details__grid">
+          <div class="nft-details__item nft-details__item--wide">
+            <dt>Nome file</dt>
+            <dd>
+              {{#if fileUrl}}
+                <a href="{{fileUrl}}" target="_blank" rel="noopener noreferrer">
+                  {{#if fileName}}{{fileName}}{{else}}Apri file NFT{{/if}}
+                </a>
+              {{else}}
+                {{#if fileName}}{{fileName}}{{else}}Non disponibile{{/if}}
+              {{/if}}
+            </dd>
+          </div>
+
+          {{#if fileType}}
+            <div class="nft-details__item">
+              <dt>Tipo file</dt>
+              <dd>{{fileType}}</dd>
+            </div>
           {{/if}}
-        </dd>
-      </div>
-    </dl>
-  </section>
 
-  <section class="nft-details__panel" aria-labelledby="file-info-title">
-    <h2 id="file-info-title">File</h2>
-    <dl class="nft-details__grid">
-      <div class="nft-details__item">
-        <dt>Nome file</dt>
-        <dd>
-          {{#if fileUrl}}
-            <a href="{{fileUrl}}" target="_blank" rel="noopener noreferrer">
-              {{#if fileName}}{{fileName}}{{else}}Apri file NFT{{/if}}
-            </a>
-          {{else}}
-            {{#if fileName}}{{fileName}}{{else}}Non disponibile{{/if}}
+          {{#if fileSize}}
+            <div class="nft-details__item">
+              <dt>Dimensione</dt>
+              <dd>{{fileSize}}</dd>
+            </div>
           {{/if}}
-        </dd>
-      </div>
+        </dl>
+      </section>
 
-      {{#if fileType}}
-        <div class="nft-details__item">
-          <dt>Tipo file</dt>
-          <dd>{{fileType}}</dd>
-        </div>
-      {{/if}}
+      <section class="nft-details__panel" aria-labelledby="price-info-title">
+        <h2 id="price-info-title">Prezzo e royalties</h2>
+        <dl class="nft-details__grid">
+          <div class="nft-details__item">
+            <dt>Prezzo</dt>
+            <dd>{{#if price}}{{price}}{{else}}Non disponibile{{/if}}</dd>
+          </div>
 
-      {{#if fileSize}}
-        <div class="nft-details__item">
-          <dt>Dimensione</dt>
-          <dd>{{fileSize}}</dd>
-        </div>
-      {{/if}}
-    </dl>
-  </section>
-
-  <section class="nft-details__panel" aria-labelledby="price-info-title">
-    <h2 id="price-info-title">Prezzo e royalties</h2>
-    <dl class="nft-details__grid">
-      <div class="nft-details__item">
-        <dt>Prezzo</dt>
-        <dd>{{#if price}}{{price}}{{else}}Non disponibile{{/if}}</dd>
-      </div>
-
-      {{#if minPrice}}
-        <div class="nft-details__item">
-          <dt>Prezzo minimo</dt>
-          <dd>{{minPrice}}</dd>
-        </div>
-      {{/if}}
-
-      {{#if maxPrice}}
-        <div class="nft-details__item">
-          <dt>Prezzo massimo</dt>
-          <dd>{{maxPrice}}</dd>
-        </div>
-      {{/if}}
-
-      <div class="nft-details__item">
-        <dt>Percentuale di royalties</dt>
-        <dd>
-          {{#if royaltyPercentage}}
-            {{royaltyPercentage}}%
-          {{else}}
-            Non disponibile
+          {{#if minPrice}}
+            <div class="nft-details__item">
+              <dt>Prezzo minimo</dt>
+              <dd>{{minPrice}}</dd>
+            </div>
           {{/if}}
-        </dd>
-      </div>
-    </dl>
-  </section>
+
+          {{#if maxPrice}}
+            <div class="nft-details__item">
+              <dt>Prezzo massimo</dt>
+              <dd>{{maxPrice}}</dd>
+            </div>
+          {{/if}}
+
+          <div class="nft-details__item">
+            <dt>Percentuale di royalties</dt>
+            <dd>
+              {{#if royaltyPercentage}}
+                {{royaltyPercentage}}%
+              {{else}}
+                Non disponibile
+              {{/if}}
+            </dd>
+          </div>
+        </dl>
+      </section>
+    </div>
+  </div>
 </main>

@@ -1,10 +1,22 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{title}}</title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
   </head>
   <body>
-    {{{body}}}
+    <div class="app-shell">
+      <nav class="topbar" aria-label="Navigazione principale">
+        <a class="topbar__brand" href="/">UniTO NFT Market</a>
+        <div class="topbar__links">
+          <a href="/nfts/torino-001">Genesis</a>
+          <a href="/nfts/liquid-art-002">Liquid Pass</a>
+        </div>
+      </nav>
+
+      {{{body}}}
+    </div>
   </body>
 </html>
