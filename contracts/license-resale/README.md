@@ -1,6 +1,6 @@
 # License Resale Simplicity Covenant
 
-This is the first MVP contract for the hackathon app described in `simplicity_liquid_license_resale_brief.md`.
+This is the first MVP contract for the hackathon app described in `../../docs/simplicity_liquid_license_resale_brief.md`.
 
 It implements a recursive Liquid covenant for explicit, non-confidential resale transactions:
 
@@ -28,7 +28,7 @@ ROYALTY_BPS
 ```
 
 Set `ROYALTY_BPS = 0` to disable royalties. In that case output 3 is still present in this strict MVP layout with amount `0`.
-See `license_resale.args.example.json` for the `.args` shape expected by `simc`.
+See `simplicity/license_resale.args.example.json` for the `.args` shape expected by `simc`.
 
 ## Genesis Instance
 
@@ -74,7 +74,7 @@ This is not a full transaction builder yet. The next implementation step is a bu
 
 ## Rust / LWK Implementation
 
-The Rust crate in this directory implements those builder steps with `smplx-std` and LWK-compatible Elements types.
+The Rust crate in `rust-builder/` implements those builder steps with `smplx-std` and LWK-compatible Elements types.
 
 Main API:
 

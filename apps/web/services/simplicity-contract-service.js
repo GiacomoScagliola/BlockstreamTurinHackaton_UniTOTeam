@@ -4,7 +4,7 @@ var os = require('os');
 var path = require('path');
 
 var CONTRACT_DIR = process.env.LICENSE_RESALE_CONTRACT_DIR ||
-  path.resolve(__dirname, '..', '..', 'Smart_contract', 'license-resale-covenant-rust');
+  path.resolve(__dirname, '..', '..', '..', 'contracts', 'license-resale', 'rust-builder');
 
 var DEFAULT_BUYER_PUBKEY = 'f9308a019258c31049344f85f89d5229b531c845836f99b08601f113bce036f9';
 

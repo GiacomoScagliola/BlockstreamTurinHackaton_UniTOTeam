@@ -1,3 +1,5 @@
 node_modules/
 target/
+config/local/
+.env
 .DS_Store

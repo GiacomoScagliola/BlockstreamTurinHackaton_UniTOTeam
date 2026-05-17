@@ -15,7 +15,7 @@ use simplex::simplicityhl::value::{UIntValue, ValueConstructible};
 use simplex::simplicityhl::{Arguments, Value, WitnessValues};
 use simplex::transaction::{PartialInput, PartialOutput, UTXO};
 
-pub const LICENSE_RESALE_SOURCE: &str = include_str!("../license_resale.simf");
+pub const LICENSE_RESALE_SOURCE: &str = include_str!("../../simplicity/license_resale.simf");
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct LicenseResaleParameters {
