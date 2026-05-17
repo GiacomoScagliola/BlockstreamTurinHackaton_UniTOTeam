@@ -9,6 +9,10 @@ var books = [
     bookAssetId: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
     paymentAssetId: LBTC_TESTNET_ASSET,
     initialPrice: 100000,
+    authorPubkey: '79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798',
+    minResalePrice: 80000,
+    maxResalePrice: 120000,
+    royaltyBps: 1500,
     authorAddress: 'tlq1qqauthoraddressreplace000000000000000000000000000000000000000',
     authorScriptHash: 'author_script_hash_demo',
     siteAddress: 'tlq1qqsiteaddressreplace00000000000000000000000000000000000000000',
@@ -24,6 +28,10 @@ var books = [
     bookAssetId: 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb',
     paymentAssetId: LBTC_TESTNET_ASSET,
     initialPrice: 150000,
+    authorPubkey: '79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798',
+    minResalePrice: 120000,
+    maxResalePrice: 180000,
+    royaltyBps: 1500,
     authorAddress: 'tlq1qqauthoraddressreplace111111111111111111111111111111111111111',
     authorScriptHash: 'author_script_hash_demo_2',
     siteAddress: 'tlq1qqsiteaddressreplace00000000000000000000000000000000000000000',
@@ -40,9 +48,14 @@ var copies = [
     bookId: 'book_001',
     currentOwnerAddress: 'tlq1qqselleraddressreplace0000000000000000000000000000000000000',
     currentOwnerScriptHash: 'seller_script_hash_demo',
-    currentOwnerPubkey: 'seller_pubkey_demo',
+    currentOwnerPubkey: 'c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee5',
     lastSalePrice: 100000,
     contractUtxo: 'book_copy_txid_demo:0',
+    contractUtxoDetails: {
+      txid: '1111111111111111111111111111111111111111111111111111111111111111',
+      vout: 0,
+      amount: 2
+    },
     status: 'listed'
   }
 ];
@@ -54,6 +67,7 @@ var listings = [
     copyId: 'copy_001',
     sellerAddress: 'tlq1qqselleraddressreplace0000000000000000000000000000000000000',
     sellerScriptHash: 'seller_script_hash_demo',
+    sellerPubkey: 'c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee5',
     price: 110000,
     status: 'active'
   }

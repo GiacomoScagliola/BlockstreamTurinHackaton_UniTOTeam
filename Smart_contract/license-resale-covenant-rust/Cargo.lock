@@ -819,6 +819,8 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "lwk_common",
+ "serde",
+ "serde_json",
  "smplx-std",
  "thiserror",
 ]

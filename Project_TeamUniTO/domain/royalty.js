@@ -12,25 +12,23 @@ function toSats(value, label) {
 
 function primarySplit(price) {
   var amount = toSats(price, 'price');
-  var author = Math.floor((amount * 90) / 100);
-  var site = amount - author;
 
   return {
-    author: author,
-    site: site
+    author: amount,
+    site: 0
   };
 }
 
-function resaleSplit(price) {
+function resaleSplit(price, royaltyBps) {
   var amount = toSats(price, 'price');
-  var seller = Math.floor((amount * 80) / 100);
-  var author = Math.floor((amount * 15) / 100);
-  var site = amount - seller - author;
+  var bps = Number.isInteger(royaltyBps) ? royaltyBps : 1500;
+  var author = Math.floor((amount * bps) / 10000);
+  var seller = amount - author;
 
   return {
     seller: seller,
     author: author,
-    site: site
+    site: 0
   };
 }
 
@@ -43,9 +41,20 @@ function getResaleRange(lastSalePrice) {
   };
 }
 
-function assertValidResalePrice(lastSalePrice, newPrice) {
+function getContractResaleRange(book, lastSalePrice) {
+  var fallback = getResaleRange(lastSalePrice);
+  var min = Number(book && book.minResalePrice);
+  var max = Number(book && book.maxResalePrice);
+
+  return {
+    min: Number.isInteger(min) ? min : fallback.min,
+    max: Number.isInteger(max) ? max : fallback.max
+  };
+}
+
+function assertValidContractResalePrice(book, lastSalePrice, newPrice) {
   var amount = toSats(newPrice, 'newPrice');
-  var range = getResaleRange(lastSalePrice);
+  var range = getContractResaleRange(book, lastSalePrice);
 
   if (amount < range.min || amount > range.max) {
     var error = new Error('Prezzo rivendita non valido. Range consentito: ' + range.min + '-' + range.max);
@@ -60,6 +69,7 @@ module.exports = {
   primarySplit: primarySplit,
   resaleSplit: resaleSplit,
   getResaleRange: getResaleRange,
-  assertValidResalePrice: assertValidResalePrice,
+  getContractResaleRange: getContractResaleRange,
+  assertValidContractResalePrice: assertValidContractResalePrice,
   toSats: toSats
 };

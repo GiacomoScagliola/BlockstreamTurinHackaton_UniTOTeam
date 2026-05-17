@@ -15,13 +15,26 @@ function getCopyOrFail(copyId) {
   return copy;
 }
 
+function getBookOrFail(bookId) {
+  var book = marketplace.findBook(bookId);
+
+  if (!book) {
+    var error = new Error('Libro non trovato');
+    error.statusCode = 404;
+    throw error;
+  }
+
+  return book;
+}
+
 router.post('/:copyId/list', function(req, res, next) {
   try {
     var copy = getCopyOrFail(req.params.copyId);
+    var book = getBookOrFail(copy.bookId);
     var price = royalty.toSats(req.body.price, 'price');
-    var range = royalty.getResaleRange(copy.lastSalePrice);
+    var range = royalty.getContractResaleRange(book, copy.lastSalePrice);
 
-    royalty.assertValidResalePrice(copy.lastSalePrice, price);
+    royalty.assertValidContractResalePrice(book, copy.lastSalePrice, price);
 
     var listingId = 'listing_' + Date.now();
     var listing = marketplace.addListing({
@@ -30,6 +43,7 @@ router.post('/:copyId/list', function(req, res, next) {
       copyId: copy.id,
       sellerAddress: req.body.sellerAddress || copy.currentOwnerAddress,
       sellerScriptHash: copy.currentOwnerScriptHash,
+      sellerPubkey: copy.currentOwnerPubkey,
       price: price,
       status: 'active'
     });

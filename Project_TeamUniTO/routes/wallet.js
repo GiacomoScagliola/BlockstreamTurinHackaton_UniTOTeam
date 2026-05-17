@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var walletService = require('../services/wallet-service');
+var simplicityContractService = require('../services/simplicity-contract-service');
 
 function asyncRoute(handler) {
   return function(req, res, next) {
@@ -25,6 +26,10 @@ router.get('/balance', asyncRoute(function(req, res) {
     res.json(balance);
   });
 }));
+
+router.get('/contract-status', function(req, res) {
+  res.json(simplicityContractService.getStatus());
+});
 
 router.use(function(err, req, res, next) {
   res.status(err.statusCode || 500).json({

@@ -61,11 +61,6 @@ router.post('/:bookId/buy/prepare', asyncRoute(function(req, res) {
       address: book.authorAddress,
       amountSats: split.author,
       assetId: book.paymentAssetId
-    },
-    {
-      address: book.siteAddress,
-      amountSats: split.site,
-      assetId: book.paymentAssetId
     }
   ];
 
@@ -88,8 +83,7 @@ router.post('/:bookId/buy/prepare', asyncRoute(function(req, res) {
         outputOrder: [
           'BookSaleContract stock - 1',
           'BookCopyContract buyer',
-          'Pagamento autore 90%',
-          'Pagamento sito 10%',
+          'Pagamento autore',
           'Resto buyer'
         ]
       }

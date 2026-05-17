@@ -3,6 +3,7 @@ var router = express.Router();
 var marketplace = require('../data/book-marketplace');
 var royalty = require('../domain/royalty');
 var walletService = require('../services/wallet-service');
+var simplicityContractService = require('../services/simplicity-contract-service');
 
 function asyncRoute(handler) {
   return function(req, res, next) {
@@ -65,10 +66,10 @@ router.post('/:listingId/buy/prepare', asyncRoute(function(req, res) {
   var copy = getCopyOrFail(listing.copyId);
   var book = getBookOrFail(copy.bookId);
   var buyerAddress = requireString(req.body.buyerAddress, 'buyerAddress');
-  var range = royalty.getResaleRange(copy.lastSalePrice);
-  var split = royalty.resaleSplit(listing.price);
+  var range = royalty.getContractResaleRange(book, copy.lastSalePrice);
+  var split = royalty.resaleSplit(listing.price, book.royaltyBps);
 
-  royalty.assertValidResalePrice(copy.lastSalePrice, listing.price);
+  royalty.assertValidContractResalePrice(book, copy.lastSalePrice, listing.price);
 
   var recipients = [
     {
@@ -80,40 +81,52 @@ router.post('/:listingId/buy/prepare', asyncRoute(function(req, res) {
       address: book.authorAddress,
       amountSats: split.author,
       assetId: book.paymentAssetId
-    },
-    {
-      address: book.siteAddress,
-      amountSats: split.site,
-      assetId: book.paymentAssetId
     }
   ];
 
-  var psetPromise = req.body.createLiquidPset === true
+  var useSimplicityBuilder = req.body.createSimplicityPset === true || req.body.mode === 'simplicity';
+  var psetPromise = useSimplicityBuilder
+    ? simplicityContractService.prepareResale(book, copy, listing, req.body)
+    : req.body.createLiquidPset === true
     ? walletService.createPset(recipients)
     : Promise.resolve(mockPset('resale', listing.id));
 
-  return psetPromise.then(function(pset) {
+  return psetPromise.then(function(builderResult) {
+    var isSimplicity = builderResult && builderResult.mode === 'simplicity-rust';
+    var pset = isSimplicity ? builderResult.pset : builderResult;
+    var contractSummary = isSimplicity ? builderResult.summary : null;
+    var outputOrder = [
+      'BookCopyContract nuovo buyer',
+      'BookCopyContract resto seller',
+      'Pagamento vecchio owner',
+      'Royalty autore',
+      'Resto buyer'
+    ];
+
+    if (contractSummary && contractSummary.fee_amount > 0) {
+      outputOrder.push('Fee Liquid');
+    }
+
     res.json({
       pset: pset,
       requiredSigners: ['seller', 'buyer'],
-      mode: req.body.createLiquidPset === true ? 'liquid' : 'mock',
+      mode: isSimplicity ? 'simplicity-rust' : req.body.createLiquidPset === true ? 'liquid' : 'mock',
       summary: {
         listingId: listing.id,
         copyId: copy.id,
         bookId: book.id,
         buyerAddress: buyerAddress,
+        buyerPubkey: req.body.buyerPubkey,
         price: listing.price,
         validPriceRange: range,
-        sellerAmount: split.seller,
-        authorRoyalty: split.author,
-        siteFee: split.site,
-        outputOrder: [
-          'BookCopyContract nuovo buyer',
-          'Pagamento vecchio owner',
-          'Royalty autore',
-          'Fee sito',
-          'Resto buyer'
-        ]
+        sellerAmount: contractSummary ? contractSummary.seller_amount : split.seller,
+        authorRoyalty: contractSummary ? contractSummary.author_royalty : split.author,
+        siteFee: 0,
+        buyerChange: contractSummary && contractSummary.buyer_change,
+        feeAmount: contractSummary && contractSummary.fee_amount,
+        remainingLicenseCopies: contractSummary && contractSummary.remaining_license_copies,
+        outputOrder: outputOrder,
+        covenant: isSimplicity ? contractSummary : null
       }
     });
   });

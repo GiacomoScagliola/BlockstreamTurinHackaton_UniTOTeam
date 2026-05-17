@@ -1,0 +1,26 @@
+{
+  "network": "liquidtestnet",
+  "license_asset_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "payment_asset_id": "144c654344aa716d6f3abcc1ca90e5641e4e2a7f633bc09fe3baf64585819a49",
+  "creator_pubkey": "79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798",
+  "seller_pubkey": "c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee5",
+  "buyer_pubkey": "f9308a019258c31049344f85f89d5229b531c845836f99b08601f113bce036f9",
+  "min_resale_price": 80000,
+  "max_resale_price": 120000,
+  "royalty_bps": 1500,
+  "sale_price": 110000,
+  "sold_license_copies": 1,
+  "fee_amount": 500,
+  "license_utxo": {
+    "txid": "1111111111111111111111111111111111111111111111111111111111111111",
+    "vout": 0,
+    "amount": 2,
+    "asset_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "payment_utxo": {
+    "txid": "2222222222222222222222222222222222222222222222222222222222222222",
+    "vout": 1,
+    "amount": 120500,
+    "asset_id": "144c654344aa716d6f3abcc1ca90e5641e4e2a7f633bc09fe3baf64585819a49"
+  }
+}
