@@ -1,6 +1,6 @@
 # License Resale Simplicity Covenant
 
-This is the first MVP contract for the hackathon app described in `../../docs/simplicity_liquid_license_resale_brief.md`.
+This is the first MVP contract for the hackathon app described in `../../docs/project_brief_and_use_cases.md`.
 
 It implements a recursive Liquid covenant for explicit, non-confidential resale transactions:
 

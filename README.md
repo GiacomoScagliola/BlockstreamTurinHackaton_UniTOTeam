@@ -1,17 +1,17 @@
-# Liquid License Market
+# Liquid License Market (LicenseLoop)
 
-A hackathon prototype for a Liquid digital-license marketplace backed by a Simplicity resale covenant.
+A hackathon prototype for a Liquid digital-license marketplace backed by a Simplicity recursive resale covenant.
 
-The app lets an author mint/sell digital book-license tokens, lets owners list copies for resale, and prepares covenant-valid Liquid PSETs for secondary sales. The contract is the source of truth: when UI or backend assumptions differ from the covenant rules, the UI/backend must change.
+The app lets creators issue and sell digital license tokens for **books, software, event tickets, or certifications**. It enforces secondary-market rules directly on the blockchain, allowing owners to list copies for resale while automatically distributing royalties to the original author. The contract is the source of truth: the UI and backend are built to respect and prepare transactions according to the covenant rules.
 
 ## What Is Implemented
 
-- Express web demo with English market, wallet, NFT, buy, and sell screens.
-- Primary sale mock flow for buying new book-license tokens.
-- Secondary-sale flow backed by the Rust Simplicity covenant builder.
-- LWK CLI integration points for wallet status, signing, PSET creation, and broadcast.
-- SimplicityHL covenant for non-confidential Liquid resale transactions.
-- Rust builder crate that builds strict 2-input resale PSETs and finalizes the Simplicity covenant input.
+- **Express Web Demo**: A marketplace interface with market, wallet, asset details, and buy/sell flows.
+- **Primary Sale Mock**: A simulated flow for the initial issuance and purchase of license tokens.
+- **Secondary Sale Protocol**: A resale flow backed by a Rust-based Simplicity covenant builder.
+- **LWK Integration**: Integration points for Liquid Wallet Kit (LWK) to manage wallet status, signing, PSET creation, and broadcasting.
+- **Simplicity Covenant**: A recursive covenant for non-confidential Liquid resale transactions, enforcing price caps and royalties.
+- **Rust Builder**: A specialized crate that constructs valid 2-input resale PSETs and finalizes the Simplicity witness.
 
 ## Repository Layout
 
@@ -19,24 +19,25 @@ The app lets an author mint/sell digital book-license tokens, lets owners list c
 BlockstreamTurinHackaton_UniTOTeam/
 |-- apps/
 |   `-- web/                         Express + Handlebars marketplace demo
-|       |-- routes/                   HTTP routes for books, copies, listings, wallet, tx
-|       |-- services/                 LWK, Liquid API, and Simplicity builder bridges
-|       |-- views/                    English UI templates
-|       |-- public/                   CSS and browser-side form wiring
-|       `-- data/                     In-memory demo marketplace state
+|       |-- routes/                   HTTP routes (books, listings, wallet, tx, liquid-api)
+|       |-- services/                 LWK, Liquid API, and Simplicity builder services
+|       |-- domain/                   Domain logic (royalty splitting, price validation)
+|       |-- views/                    Handlebars UI templates
+|       |-- public/                   Client-side JS and CSS
+|       `-- data/                     Mock marketplace and NFT data
 |
 |-- contracts/
 |   `-- license-resale/
 |       |-- simplicity/               Canonical SimplicityHL source and examples
-|       |-- rust-builder/             Rust/LWK-compatible PSET builder crate
-|       `-- README.md                 Contract-specific notes
+|       |-- rust-builder/             Rust PSET builder and covenant finalizer
+|       `-- README.md                 Detailed contract specifications
 |
 |-- docs/
-|   |-- simplicity_liquid_license_resale_brief.md
-|   `-- original_project_notes.md
+|   |-- project_brief_and_use_cases.md   Product vision and detailed use cases
+|   `-- architecture_and_design_decisions.md  Architectural journey and design notes
 |
 |-- config/
-|   `-- local/                        Ignored local secrets, API keys, and machine config
+|   `-- local/                        Ignored local environment and machine config
 |
 |-- .gitignore
 `-- README.md
@@ -50,8 +51,8 @@ The resale covenant currently enforces this transaction shape:
 Input 0: seller's license covenant UTXO
 Input 1: buyer payment UTXO
 
-Output 0: sold license copies locked to covenant(owner = buyer)
-Output 1: remaining license copies locked to covenant(owner = seller)
+Output 0: sold license copies locked to covenant (owner = buyer)
+Output 1: remaining license copies locked to covenant (owner = seller)
 Output 2: seller payment
 Output 3: author royalty
 Output 4: buyer payment change
@@ -60,8 +61,8 @@ Output 5: optional Liquid fee output
 
 Important rules:
 
-- Assets and values must be explicit, not confidential.
-- `LICENSE_ASSET_ID`, `PAYMENT_ASSET_ID`, `CREATOR_PUBKEY`, `MIN_RESALE_PRICE`, `MAX_RESALE_PRICE`, and `ROYALTY_BPS` are author-chosen genesis parameters.
+- **Explicit Values**: Assets and amounts must be explicit (not confidential) for contract validation.
+- **Policy Parameters**: `LICENSE_ASSET_ID`, `PAYMENT_ASSET_ID`, `CREATOR_PUBKEY`, `MIN_RESALE_PRICE`, `MAX_RESALE_PRICE`, and `ROYALTY_BPS` are fixed at genesis.
 - The current seller must sign.
 - The sale price must stay inside the author-defined min/max caps.
 - Seller receives `sale_price - royalty`.
@@ -188,13 +189,15 @@ config/local/
 
 That folder is ignored by git.
 
-## Current Limitations
+## Future Roadmap & Limitations
 
-- Primary sale is still a web/API mock path.
-- The implemented covenant covers resale, not the full genesis sale contract.
-- Demo data is in memory under `apps/web/data/`.
-- LWK server, loaded wallet, and loaded signer must exist before real signing/broadcast.
-- The sample PSET uses demo UTXOs unless real UTXOs are provided in the request body.
+This project is a functional prototype focused on the core Simplicity covenant logic. The following features are currently out of scope or planned for future development:
+
+- **Server-Side Ownership Verification**: The logic for server-level authorization of asset utilization (e.g., gated access to a PDF or software binary) is described in the `docs/` but not implemented. In a production environment, the server would issue a random nonce that the user must sign with their wallet to prove control over the current license UTXO.
+- **Automated Primary Sales**: The primary sale flow (initial minting/selling) is currently a web API mock. A full implementation would involve a dedicated "Genesis Covenant" to manage initial issuance and stock.
+- **Real-Time Indexer**: The app uses mock data and manually provided UTXOs. A production version would require a robust blockchain indexer (like Esplora or Electrum) to track license lineage automatically.
+- **Confidential Assets**: The current covenant requires explicit assets and values for validation. Future iterations could leverage Simplicity's ability to handle confidential transactions once the relevant jets are fully integrated.
+- **Wallet Integration**: Real signing and broadcasting require a local LWK server and pre-configured wallet/signer.
 
 ## Demo Flow
 

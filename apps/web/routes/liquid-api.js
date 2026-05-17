@@ -13,9 +13,9 @@ function getNetwork(req) {
 }
 
 /**
- * @brief Restituisce le reti Liquid supportate dal client interno.
+ * @brief Returns the Liquid networks supported by the internal client.
  * @route GET /api/liquid/networks
- * @return {Object} Configurazione delle reti e rete di default.
+ * @return {Object} Network configuration and default network.
  */
 router.get('/networks', function(req, res) {
   res.json({
@@ -26,11 +26,11 @@ router.get('/networks', function(req, res) {
 });
 
 /**
- * @brief Recupera i dettagli completi di una transazione Liquid.
+ * @brief Retrieves the full details of a Liquid transaction.
  * @route GET /api/liquid/tx/:txid
- * @param {string} txid - Identificativo esadecimale della transazione.
- * @query {string} [network] - Rete da usare: testnet/mainnet oppure liquidtestnet/liquid.
- * @return {Object} Transazione nel formato restituito da Esplora.
+ * @param {string} txid - Hexadecimal transaction identifier.
+ * @query {string} [network] - Network to use: testnet/mainnet or liquidtestnet/liquid.
+ * @return {Object} Transaction in the format returned by Esplora.
  */
 router.get('/tx/:txid', asyncRoute(function(req, res) {
   return liquidApi.getTransaction(req.params.txid, getNetwork(req)).then(function(transaction) {
@@ -39,12 +39,12 @@ router.get('/tx/:txid', asyncRoute(function(req, res) {
 }));
 
 /**
- * @brief Recupera un output specifico di una transazione Liquid.
+ * @brief Retrieves a specific output of a Liquid transaction.
  * @route GET /api/liquid/tx/:txid/output/:vout
- * @param {string} txid - Identificativo esadecimale della transazione.
- * @param {number} vout - Indice dell'output da leggere.
- * @query {string} [network] - Rete da usare: testnet/mainnet oppure liquidtestnet/liquid.
- * @return {Object} Output normalizzato con script, address, asset e valore.
+ * @param {string} txid - Hexadecimal transaction identifier.
+ * @param {number} vout - Index of the output to read.
+ * @query {string} [network] - Network to use: testnet/mainnet or liquidtestnet/liquid.
+ * @return {Object} Normalized output with script, address, asset, and value.
  */
 router.get('/tx/:txid/output/:vout', asyncRoute(function(req, res) {
   return liquidApi.getTransactionOutput(req.params.txid, req.params.vout, getNetwork(req)).then(function(output) {
@@ -53,12 +53,12 @@ router.get('/tx/:txid/output/:vout', asyncRoute(function(req, res) {
 }));
 
 /**
- * @brief Recupera un prevout raw in formato EsploraVout per la finalizzazione Simplicity.
+ * @brief Retrieves a raw prevout in EsploraVout format for Simplicity finalization.
  * @route GET /api/liquid/tx/:txid/prevout/:vout
- * @param {string} txid - Identificativo esadecimale della transazione che contiene l'output.
- * @param {number} vout - Indice dell'output da usare come prevout.
- * @query {string} [network] - Rete da usare: testnet/mainnet oppure liquidtestnet/liquid.
- * @return {Object} Output raw Esplora arricchito con txid e vout.
+ * @param {string} txid - Hexadecimal identifier of the transaction containing the output.
+ * @param {number} vout - Index of the output to use as prevout.
+ * @query {string} [network] - Network to use: testnet/mainnet or liquidtestnet/liquid.
+ * @return {Object} Raw Esplora output enriched with txid and vout.
  */
 router.get('/tx/:txid/prevout/:vout', asyncRoute(function(req, res) {
   return liquidApi.getTransactionPrevout(req.params.txid, req.params.vout, getNetwork(req)).then(function(prevout) {
@@ -67,12 +67,12 @@ router.get('/tx/:txid/prevout/:vout', asyncRoute(function(req, res) {
 }));
 
 /**
- * @brief Recupera una lista ordinata di prevout raw EsploraVout per finalizeSimplicityInputs.
+ * @brief Retrieves an ordered list of raw EsploraVout prevouts for finalizeSimplicityInputs.
  * @route POST /api/liquid/prevouts
- * @body {Array<Object>} inputs - Lista ordinata di input nel formato { txid, vout }.
- * @body {string} [network] - Rete da usare: testnet/mainnet oppure liquidtestnet/liquid.
- * @query {string} [network] - Rete alternativa se non viene passata nel body.
- * @return {Object} Rete LWK normalizzata e array prevouts nello stesso ordine degli input.
+ * @body {Array<Object>} inputs - Ordered list of inputs in the format { txid, vout }.
+ * @body {string} [network] - Network to use: testnet/mainnet or liquidtestnet/liquid.
+ * @query {string} [network] - Alternative network if not passed in the body.
+ * @return {Object} Normalized LWK network and prevouts array in the same order as inputs.
  */
 router.post('/prevouts', asyncRoute(function(req, res) {
   return liquidApi.getTransactionPrevouts(req.body.inputs, getNetwork(req)).then(function(prevouts) {
@@ -84,11 +84,11 @@ router.post('/prevouts', asyncRoute(function(req, res) {
 }));
 
 /**
- * @brief Converte una transazione Liquid in dati pronti per la vista dettaglio NFT.
+ * @brief Converts a Liquid transaction into data ready for the NFT detail view.
  * @route GET /api/liquid/tx/:txid/nft-details
- * @param {string} txid - Identificativo esadecimale della transazione.
- * @query {string} [network] - Rete da usare: testnet/mainnet oppure liquidtestnet/liquid.
- * @return {Object} Dati NFT normalizzati per il template nft-details.hbs.
+ * @param {string} txid - Hexadecimal transaction identifier.
+ * @query {string} [network] - Network to use: testnet/mainnet or liquidtestnet/liquid.
+ * @return {Object} Normalized NFT data for the nft-details.hbs template.
  */
 router.get('/tx/:txid/nft-details', asyncRoute(function(req, res) {
   return liquidApi.getTransaction(req.params.txid, getNetwork(req)).then(function(transaction) {
@@ -97,11 +97,11 @@ router.get('/tx/:txid/nft-details', asyncRoute(function(req, res) {
 }));
 
 /**
- * @brief Trasmette una transazione raw sulla rete Liquid selezionata.
+ * @brief Broadcasts a raw transaction on the selected Liquid network.
  * @route POST /api/liquid/tx
- * @body {string} rawTx - Transazione raw in formato esadecimale.
- * @query {string} [network] - Rete da usare: testnet/mainnet oppure liquidtestnet/liquid.
- * @return {Object} Identificativo della transazione trasmessa.
+ * @body {string} rawTx - Raw transaction in hexadecimal format.
+ * @query {string} [network] - Network to use: testnet/mainnet or liquidtestnet/liquid.
+ * @return {Object} Identifier of the broadcasted transaction.
  */
 router.post('/tx', asyncRoute(function(req, res) {
   return liquidApi.broadcastTransaction(req.body.rawTx, getNetwork(req)).then(function(txid) {
@@ -110,11 +110,11 @@ router.post('/tx', asyncRoute(function(req, res) {
 }));
 
 /**
- * @brief Recupera statistiche e riepilogo di un indirizzo Liquid.
+ * @brief Retrieves statistics and summary for a Liquid address.
  * @route GET /api/liquid/address/:address
- * @param {string} address - Indirizzo Liquid o Liquid Testnet.
- * @query {string} [network] - Rete da usare: testnet/mainnet oppure liquidtestnet/liquid.
- * @return {Object} Informazioni address con chain_stats e mempool_stats.
+ * @param {string} address - Liquid or Liquid Testnet address.
+ * @query {string} [network] - Network to use: testnet/mainnet or liquidtestnet/liquid.
+ * @return {Object} Address information with chain_stats and mempool_stats.
  */
 router.get('/address/:address', asyncRoute(function(req, res) {
   return liquidApi.getAddress(req.params.address, getNetwork(req)).then(function(addressInfo) {
@@ -123,11 +123,11 @@ router.get('/address/:address', asyncRoute(function(req, res) {
 }));
 
 /**
- * @brief Recupera la lista delle transazioni associate a un indirizzo Liquid.
+ * @brief Retrieves the list of transactions associated with a Liquid address.
  * @route GET /api/liquid/address/:address/txs
- * @param {string} address - Indirizzo Liquid o Liquid Testnet.
- * @query {string} [network] - Rete da usare: testnet/mainnet oppure liquidtestnet/liquid.
- * @return {Array<Object>} Transazioni associate all'indirizzo.
+ * @param {string} address - Liquid or Liquid Testnet address.
+ * @query {string} [network] - Network to use: testnet/mainnet or liquidtestnet/liquid.
+ * @return {Array<Object>} Transactions associated with the address.
  */
 router.get('/address/:address/txs', asyncRoute(function(req, res) {
   return liquidApi.getAddressTransactions(req.params.address, getNetwork(req)).then(function(transactions) {
@@ -136,11 +136,11 @@ router.get('/address/:address/txs', asyncRoute(function(req, res) {
 }));
 
 /**
- * @brief Recupera gli UTXO disponibili per un indirizzo Liquid.
+ * @brief Retrieves the available UTXOs for a Liquid address.
  * @route GET /api/liquid/address/:address/utxos
- * @param {string} address - Indirizzo Liquid o Liquid Testnet.
- * @query {string} [network] - Rete da usare: testnet/mainnet oppure liquidtestnet/liquid.
- * @return {Array<Object>} Lista degli output non spesi associati all'indirizzo.
+ * @param {string} address - Liquid or Liquid Testnet address.
+ * @query {string} [network] - Network to use: testnet/mainnet or liquidtestnet/liquid.
+ * @return {Array<Object>} List of unspent outputs associated with the address.
  */
 router.get('/address/:address/utxos', asyncRoute(function(req, res) {
   return liquidApi.getAddressUtxos(req.params.address, getNetwork(req)).then(function(utxos) {
@@ -149,11 +149,11 @@ router.get('/address/:address/utxos', asyncRoute(function(req, res) {
 }));
 
 /**
- * @brief Recupera le informazioni di un asset Liquid.
+ * @brief Retrieves information for a Liquid asset.
  * @route GET /api/liquid/asset/:assetId
- * @param {string} assetId - Identificativo esadecimale dell'asset Liquid.
- * @query {string} [network] - Rete da usare: testnet/mainnet oppure liquidtestnet/liquid.
- * @return {Object} Metadati e statistiche dell'asset.
+ * @param {string} assetId - Hexadecimal identifier of the Liquid asset.
+ * @query {string} [network] - Network to use: testnet/mainnet or liquidtestnet/liquid.
+ * @return {Object} Asset metadata and statistics.
  */
 router.get('/asset/:assetId', asyncRoute(function(req, res) {
   return liquidApi.getAsset(req.params.assetId, getNetwork(req)).then(function(asset) {
@@ -162,11 +162,11 @@ router.get('/asset/:assetId', asyncRoute(function(req, res) {
 }));
 
 /**
- * @brief Recupera le transazioni di issuance, reissuance o burn associate a un asset.
+ * @brief Retrieves issuance, reissuance, or burn transactions associated with an asset.
  * @route GET /api/liquid/asset/:assetId/txs
- * @param {string} assetId - Identificativo esadecimale dell'asset Liquid.
- * @query {string} [network] - Rete da usare: testnet/mainnet oppure liquidtestnet/liquid.
- * @return {Array<Object>} Transazioni associate all'asset.
+ * @param {string} assetId - Hexadecimal identifier of the Liquid asset.
+ * @query {string} [network] - Network to use: testnet/mainnet or liquidtestnet/liquid.
+ * @return {Array<Object>} Transactions associated with the asset.
  */
 router.get('/asset/:assetId/txs', asyncRoute(function(req, res) {
   return liquidApi.getAssetTransactions(req.params.assetId, getNetwork(req)).then(function(transactions) {

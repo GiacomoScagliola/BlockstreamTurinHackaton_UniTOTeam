@@ -2,12 +2,12 @@ var https = require("https");
 
 var NETWORKS = {
     liquid: {
-        apiBaseUrl: "https://blockstream.info/liquid/api", //Da correggere
+        apiBaseUrl: "https://blockstream.info/liquid/api",
         explorerBaseUrl: "https://blockstream.info/liquid",
         lwkName: "mainnet",
     },
     liquidtestnet: {
-        apiBaseUrl: "https://blockstream.info/liquidtestnet/api", //Da correggere
+        apiBaseUrl: "https://blockstream.info/liquidtestnet/api",
         explorerBaseUrl: "https://blockstream.info/liquidtestnet",
         lwkName: "testnet",
     },
@@ -33,7 +33,7 @@ function getNetworkConfig(networkName) {
     var config = NETWORKS[selectedNetwork];
 
     if (!config) {
-        var error = new Error("Liquid network non supportata: " + selectedNetwork);
+        var error = new Error("Liquid network not supported: " + selectedNetwork);
         error.statusCode = 400;
         throw error;
     }
@@ -47,7 +47,7 @@ function getLwkNetworkName(networkName) {
 
 function validateHex(value, label) {
     if (!/^[0-9a-fA-F]+$/.test(value)) {
-        var error = new Error(label + " deve essere una stringa esadecimale");
+        var error = new Error(label + " must be a hexadecimal string");
         error.statusCode = 400;
         throw error;
     }
@@ -57,7 +57,7 @@ function validateTxid(txid) {
     validateHex(txid, "txid");
 
     if (txid.length !== 64) {
-        var error = new Error("txid deve contenere 64 caratteri esadecimali");
+        var error = new Error("txid must contain 64 hexadecimal characters");
         error.statusCode = 400;
         throw error;
     }
@@ -67,7 +67,7 @@ function validateAssetId(assetId) {
     validateHex(assetId, "assetId");
 
     if (assetId.length !== 64) {
-        var error = new Error("assetId deve contenere 64 caratteri esadecimali");
+        var error = new Error("assetId must contain 64 hexadecimal characters");
         error.statusCode = 400;
         throw error;
     }
@@ -77,7 +77,7 @@ function validateVout(vout) {
     var outputIndex = Number(vout);
 
     if (!Number.isInteger(outputIndex) || outputIndex < 0) {
-        var error = new Error("vout deve essere un intero positivo");
+        var error = new Error("vout must be a positive integer");
         error.statusCode = 400;
         throw error;
     }
@@ -87,7 +87,7 @@ function validateVout(vout) {
 
 function validateAddress(address) {
     if (!/^[a-zA-Z0-9]+$/.test(address)) {
-        var error = new Error("address contiene caratteri non validi");
+        var error = new Error("address contains invalid characters");
         error.statusCode = 400;
         throw error;
     }
@@ -133,7 +133,7 @@ function requestLiquidApi(pathname, options) {
         );
 
         req.on("timeout", function () {
-            req.destroy(new Error("Timeout API Liquid"));
+            req.destroy(new Error("Liquid API timeout"));
         });
 
         req.on("error", reject);
@@ -202,7 +202,7 @@ function getTransactionPrevout(txid, vout, network) {
 
 function getTransactionPrevouts(inputs, network) {
     if (!Array.isArray(inputs) || inputs.length === 0) {
-        var error = new Error("inputs deve essere un array non vuoto di { txid, vout }");
+        var error = new Error("inputs must be a non-empty array of { txid, vout }");
         error.statusCode = 400;
         throw error;
     }
@@ -210,7 +210,7 @@ function getTransactionPrevouts(inputs, network) {
     return Promise.all(
         inputs.map(function (input) {
             if (!input || typeof input !== "object") {
-                var itemError = new Error("Ogni input deve contenere txid e vout");
+                var itemError = new Error("Each input must contain txid and vout");
                 itemError.statusCode = 400;
                 throw itemError;
             }
