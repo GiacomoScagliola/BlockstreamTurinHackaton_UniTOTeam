@@ -152,7 +152,7 @@ POST /api/tx/sign
 POST /api/tx/broadcast
 ```
 
-## LWK Setup
+## LWK Setup:
 
 The wallet page checks:
 
